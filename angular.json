@@ -1,7 +1,38 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1,
-  "newProjectRoot": "projects",
-  "projects": {
-  }
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "ngx-pwa": {
+            "projectType": "library",
+            "root": "projects/ngx-pwa",
+            "sourceRoot": "projects/ngx-pwa/src",
+            "prefix": "lib",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "options": {
+                        "project": "projects/ngx-pwa/ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "projects/ngx-pwa/tsconfig.lib.prod.json"
+                        },
+                        "development": {
+                            "tsConfig": "projects/ngx-pwa/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/ngx-pwa/src/test.ts",
+                        "tsConfig": "projects/ngx-pwa/tsconfig.spec.json",
+                        "karmaConfig": "projects/ngx-pwa/karma.conf.js"
+                    }
+                }
+            }
+        }
+    }
 }

@@ -1,0 +1,6 @@
+<div *ngIf="offlineService.isOffline">
+    {{offlineMessage}}
+</div>
+<div *ngIf="!offlineService.isOffline && offlineService.cachedRequests.length">
+    {{unsavedChangesMessage}}
+</div>
