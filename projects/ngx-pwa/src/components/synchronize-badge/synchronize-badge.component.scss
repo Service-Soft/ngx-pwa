@@ -1,0 +1,10 @@
+i {
+    font-size: 22px;
+    height: 24px;
+}
+i::before {
+    display: inline-block;
+    margin-top: 2px;
+    text-align: end;
+    transform: scaleX(-1);
+}

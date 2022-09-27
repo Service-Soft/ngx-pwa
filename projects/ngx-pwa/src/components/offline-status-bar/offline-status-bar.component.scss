@@ -1,9 +1,11 @@
 div {
-    top: 0;
-    text-align: center;
-    padding: 10px;
     background-color: orange;
     font-weight: bolder;
     letter-spacing: 1px;
     text-transform: uppercase;
+    height: 50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

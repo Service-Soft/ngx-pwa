@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { NgxPWAOfflineStatusBarComponent } from './offline-status-bar.component';
+import { NgxPwaSynchronizeBadgeModule } from '../synchronize-badge/synchronize-badge.module';
+import { NgxPwaOfflineStatusBarComponent } from './offline-status-bar.component';
 
 @NgModule({
     imports: [
-        CommonModule
+        CommonModule,
+        NgxPwaSynchronizeBadgeModule
     ],
-    declarations: [NgxPWAOfflineStatusBarComponent],
-    exports: [NgxPWAOfflineStatusBarComponent]
+    declarations: [NgxPwaOfflineStatusBarComponent],
+    exports: [NgxPwaOfflineStatusBarComponent]
 })
-export class NgxPWAOfflineStatusBarModule { }
+export class NgxPwaOfflineStatusBarModule { }

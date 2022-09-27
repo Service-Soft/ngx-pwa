@@ -1,4 +1,4 @@
-import { Many, omit } from 'lodash';
+import { cloneDeep, Many, omit } from 'lodash';
 
 /**
  * Encapsulates functionality of lodash.
@@ -15,5 +15,15 @@ export abstract class LodashUtilities {
      */
     static omit<T extends object, K extends keyof T>(object: T | null | undefined, ...paths: Many<K>[]): Omit<T, K> {
         return omit(object, ...paths);
+    }
+
+    /**
+     * This method is like _.clone except that it recursively clones value.
+     *
+     * @param value - The value to recursively clone.
+     * @returns Returns the deep cloned value.
+     */
+    static cloneDeep<T>(value: T): T {
+        return cloneDeep(value);
     }
 }

@@ -1,30 +1,76 @@
 import { HttpClient, HttpRequest } from '@angular/common/http';
-import { InjectionToken } from '@angular/core';
+import { InjectionToken, NgZone } from '@angular/core';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { LodashUtilities } from '../encapsulation/lodash.utilities';
 import { HttpMethod } from '../models/http-method.enum';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RequestMetadataInternal } from '../models/request-metadata-internal.model';
 
 /**
  * The Generic Base EntityType.
  */
 export type BaseEntityType<T> = { [K in keyof T]: unknown };
 
-export const NGX_OFFLINE_SERVICE = new InjectionToken('Provider for the OfflineService used eg. in the offline request interceptor.', {
+export const NGX_PWA_OFFLINE_SERVICE = new InjectionToken('Provider for the OfflineService used eg. in the offline request interceptor.', {
     providedIn: 'root',
     factory: () => {
         // eslint-disable-next-line no-console
         console.error(
             // eslint-disable-next-line max-len
-            'No OfflineService has been provided for the token NGX_OFFLINE_SERVICE\nAdd this to your app.module.ts provider array:\n{\n    provide: NGX_OFFLINE_SERVICE,\n    useExisting: MyOfflineService\n}',
+            'No OfflineService has been provided for the token NGX_OFFLINE_SERVICE\nAdd this to your app.module.ts provider array:\n{\n    provide: NGX_PWA_OFFLINE_SERVICE,\n    useExisting: MyOfflineService\n}',
         );
     },
 });
 
 /**
+ * The type of a cached offline request.
+ * Contains the http request as well as some metadata.
+ */
+export interface CachedRequest<T> {
+    /**
+     * The actual http request.
+     */
+    request: HttpRequest<T>,
+    /**
+     * The metadata for that request.
+     */
+    metadata: RequestMetadataInternal
+}
+
+/**
  * The base class for an offline service.
  */
-export abstract class BaseOfflineService {
-    private readonly CACHED_REQUESTS_KEY = 'requests';
+export class NgxPwaOfflineService {
+    /**
+     * The key under which any requests are saved in local storage.
+     */
+    readonly CACHED_REQUESTS_KEY = 'requests';
+
+    /**
+     * The prefix of offline generated ids.
+     * Is used to check if a request still has unresolved dependencies.
+     */
+    readonly OFFLINE_ID_PREFIX = 'offline';
+
+    /**
+     * A snackbar message to display when the synchronization of all cached requests has been finished.
+     */
+    protected readonly ALL_SYNC_FINISHED_SNACK_BAR_MESSAGE = 'Synchronization finished';
+
+    /**
+     * A snackbar message to display when the synchronization of all cached requests fails.
+     */
+    protected readonly ALL_SYNC_FAILED_SNACK_BAR_MESSAGE = 'Synchronization failed, please try again later';
+
+    /**
+     * A snackbar message to display when the synchronization of a single cached requests has been finished.
+     */
+    protected readonly SINGLE_SYNC_FINISHED_SNACK_BAR_MESSAGE = 'Synchronization finished';
+
+    /**
+     * A snackbar message to display when the synchronization of a single cached requests fails.
+     */
+    protected readonly SINGLE_SYNC_FAILED_SNACK_BAR_MESSAGE = 'Synchronization failed, please try again later';
 
     /**
      * Whether or not the user has no internet connection.
@@ -35,47 +81,33 @@ export abstract class BaseOfflineService {
      * A subject of all the requests that have been done while offline.
      * Needs to be used for applying offline data or syncing the requests to the api.
      */
-    private readonly cachedRequestsSubject: BehaviorSubject<HttpRequest<unknown>[]>;
+    private readonly cachedRequestsSubject: BehaviorSubject<CachedRequest<unknown>[]>;
 
     // eslint-disable-next-line jsdoc/require-returns
     /**
      * The currently stored cached requests (if there are any).
      */
-    get cachedRequests(): HttpRequest<unknown>[] {
+    get cachedRequests(): CachedRequest<unknown>[] {
         return this.cachedRequestsSubject.value;
     }
     // eslint-disable-next-line jsdoc/require-jsdoc
-    set cachedRequests(cachedRequests: HttpRequest<unknown>[]) {
+    set cachedRequests(cachedRequests: CachedRequest<unknown>[]) {
         localStorage.setItem(this.CACHED_REQUESTS_KEY, JSON.stringify(cachedRequests));
         this.cachedRequestsSubject.next(cachedRequests);
     }
 
-    constructor(private readonly http: HttpClient) {
+    constructor(
+        private readonly http: HttpClient,
+        private readonly snackBar: MatSnackBar,
+        private readonly zone: NgZone
+    ) {
         this.isOffline = !navigator.onLine;
         window.ononline = () => this.isOffline = !navigator.onLine;
         window.onoffline = () => this.isOffline = !navigator.onLine;
 
         const stringData = localStorage.getItem(this.CACHED_REQUESTS_KEY);
-        const requestsData = stringData ? JSON.parse(stringData) as HttpRequest<unknown>[] : [];
+        const requestsData = stringData ? JSON.parse(stringData) as CachedRequest<unknown>[] : [];
         this.cachedRequestsSubject = new BehaviorSubject(requestsData);
-    }
-
-    /**
-     * Gets the type of the provided request.
-     *
-     * @param request - The http request to get the type from.
-     */
-    protected abstract getTypeFromRequest<Type>(request: HttpRequest<unknown>): Type;
-
-    /**
-     * Gets the id key of the provided request.
-     *
-     * @param request - The http request to get the idKey from.
-     * @returns The idKey of the given request. Defaults to 'id'.
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getIdKeyFromRequest<EntityType extends BaseEntityType<EntityType>>(request: HttpRequest<EntityType>): keyof EntityType {
-        return 'id' as keyof EntityType;
     }
 
     /**
@@ -85,32 +117,32 @@ export abstract class BaseOfflineService {
      * @param entities - The already existing data.
      * @returns The already existing entities extended/modified by the offline cached requests.
      */
-    applyOfflineData<EntityType extends BaseEntityType<EntityType>, Type>(
-        type: Type,
+    applyOfflineData<EntityType extends BaseEntityType<EntityType>>(
+        type: string,
         entities: EntityType[]
     ): EntityType[] {
         if (!this.cachedRequests.length) {
             return entities;
         }
         const res: EntityType[] = Array.from(entities);
-        const cachedRequests = this.cachedRequests.filter(req => this.getTypeFromRequest<Type>(req) === type) as HttpRequest<EntityType>[];
+        const cachedRequests = this.cachedRequests.filter(req => req.metadata.type === type);
         for (const req of cachedRequests) {
-            switch (req.method) {
+            switch (req.request.method) {
                 case HttpMethod.POST:
-                    res.push(req.body as EntityType);
+                    res.push(req.request.body as EntityType);
                     break;
                 case HttpMethod.PATCH:
-                    const patchIdKey = this.getIdKeyFromRequest(req);
-                    const index = res.findIndex(e => req.urlWithParams.includes(`${e[patchIdKey]}`));
-                    res[index] = this.updateOffline(req.body as EntityType, res[index]);
+                    const patchIdKey: keyof EntityType = req.metadata.idKey;
+                    const index = res.findIndex(e => req.request.urlWithParams.includes(`${e[patchIdKey]}`));
+                    res[index] = this.updateOffline(req.request.body as EntityType, res[index]);
                     break;
                 case HttpMethod.DELETE:
-                    const deleteIdKey = this.getIdKeyFromRequest(req);
-                    res.splice(res.findIndex(e => req.urlWithParams.includes(`${e[deleteIdKey]}`)), 1);
+                    const deleteIdKey: keyof EntityType = req.metadata.idKey;
+                    res.splice(res.findIndex(e => req.request.urlWithParams.includes(`${e[deleteIdKey]}`)), 1);
                     break;
                 default:
                     // eslint-disable-next-line no-console
-                    console.error('There was an unknown http-method in one of your cached offline requests:', req.method);
+                    console.error('There was an unknown http-method in one of your cached offline requests:', req.request.method);
                     break;
             }
         }
@@ -135,67 +167,110 @@ export abstract class BaseOfflineService {
     }
 
     /**
+     * Sends a specific cached request to the server.
+     *
+     * @param request - The request that should be synced.
+     */
+    async sync<T>(request: CachedRequest<T>): Promise<void> {
+        const cachedRequestsPriorChanges = LodashUtilities.cloneDeep(this.cachedRequests);
+        try {
+            const res = await this.syncSingleRequest(request);
+            this.zone.run(() => {
+                this.snackBar.open(this.SINGLE_SYNC_FINISHED_SNACK_BAR_MESSAGE, undefined, { duration: 2500 });
+            });
+            this.removeSingleRequest(request);
+            this.updateOfflineIdsInRequests(request, res);
+        }
+        catch (error) {
+            this.zone.run(() => {
+                this.snackBar.open(this.SINGLE_SYNC_FAILED_SNACK_BAR_MESSAGE, undefined, { duration: 2500 });
+            });
+            this.cachedRequests = cachedRequestsPriorChanges;
+        }
+    }
+
+    /**
      * Sends all cached requests to the server. Tries to handle dependencies of requests on each other.
      */
     async syncAll(): Promise<void> {
-        const request = this.cachedRequests.find(r => !this.hasUnresolvedDependency(r));
+        const cachedRequestsPriorChanges = LodashUtilities.cloneDeep(this.cachedRequests);
+        try {
+            await this.syncAllRecursive();
+            this.zone.run(() => {
+                this.snackBar.open(this.ALL_SYNC_FINISHED_SNACK_BAR_MESSAGE, undefined, { duration: 2500 });
+            });
+            this.cachedRequests = [];
+        }
+        catch (error) {
+            this.zone.run(() => {
+                this.snackBar.open(this.ALL_SYNC_FAILED_SNACK_BAR_MESSAGE, undefined, { duration: 2500 });
+            });
+            this.cachedRequests = cachedRequestsPriorChanges;
+        }
+    }
+
+    /**
+     * The recursive method used to syn all requests to the api.
+     */
+    protected async syncAllRecursive(): Promise<void> {
+        // eslint-disable-next-line max-len
+        const request = this.cachedRequests.find(r => !this.hasUnresolvedDependency(r)) as CachedRequest<BaseEntityType<unknown>> | undefined;
         if (!request) {
             return;
         }
-        await this.syncSingleRequest(request as HttpRequest<BaseEntityType<unknown>>);
-        await this.syncAll();
+        const res = await this.syncSingleRequest(request);
+        this.updateOfflineIdsInRequests(request, res);
+        await this.syncAllRecursive();
     }
 
     /**
      * Sends a single cached request to the server.
      *
      * @param request - The request that should be synced.
+     * @returns A promise of the request result.
      */
-    async syncSingleRequest<EntityType extends BaseEntityType<EntityType>>(request: HttpRequest<EntityType>): Promise<void> {
+    protected async syncSingleRequest<T>(
+        request: CachedRequest<T>
+    ): Promise<T> {
         if (this.isOffline || this.hasUnresolvedDependency(request)) {
-            return;
+            throw new Error();
         }
-        this.removeSingleRequest(request);
         const requestObservable = this.request(request);
         if (!requestObservable) {
-            return;
+            throw new Error();
         }
-        await firstValueFrom(requestObservable)
-            .then(res => {
-                // TODO
-                // this.snackBarService.open('Synchronization finished');
-                if (!this.cachedRequests.length || !request.body) {
-                    return;
-                }
-                const idKey = this.getIdKeyFromRequest(request);
-                if (res[idKey] != null) {
-                    const requestsString = `${this.cachedRequests}`
-                        .split(request.body[idKey] as string)
-                        .join(res[idKey] as string);
-                    this.cachedRequests = JSON.parse(requestsString) as HttpRequest<unknown>[];
-                }
-            })
-            .catch(() => {
-                // TODO
-                // this.dialog.open(InfoDialogComponent, {
-                //     data: 'Synchronization failed, please try again later'
-                // });
-                if (!this.cachedRequests.includes(request)) {
-                    this.cachedRequests.push(request);
-                }
-                return;
-            });
+        return await firstValueFrom(requestObservable);
     }
 
-    private request<EntityType extends BaseEntityType<EntityType>>(request: HttpRequest<EntityType>): Observable<EntityType> | undefined {
-        switch (request.method) {
+    private updateOfflineIdsInRequests<T>(request: CachedRequest<T>, res: T): void {
+        if (this.cachedRequests.length && request.request.body != null) {
+            const idKey = request.metadata.idKey;
+            if (res[idKey] != null) {
+                const requestsString = `${this.cachedRequests}`.split(request.request.body[idKey] as string).join(res[idKey] as string);
+                this.cachedRequests = JSON.parse(requestsString) as CachedRequest<T>[];
+            }
+        }
+    }
+
+    /**
+     * Calls http.post/patch/delete etc. On the provided request.
+     *
+     * @param request - The request that should be sent.
+     * @returns The observable of the request or undefined if something went wrong.
+     */
+    protected request<EntityType extends BaseEntityType<EntityType>>(
+        request: CachedRequest<EntityType>
+    ): Observable<EntityType> | undefined {
+        switch (request.request.method) {
             case HttpMethod.POST:
-                const idKey = this.getIdKeyFromRequest(request);
-                return this.http.post<EntityType>(request.urlWithParams, LodashUtilities.omit(request.body, idKey));
+                return this.http.post<EntityType>(
+                    request.request.urlWithParams,
+                    LodashUtilities.omit(request.request.body, request.metadata.idKey)
+                );
             case HttpMethod.PATCH:
-                return this.http.patch<EntityType>(request.urlWithParams, request.body);
+                return this.http.patch<EntityType>(request.request.urlWithParams, request.request.body);
             case HttpMethod.DELETE:
-                return this.http.delete<EntityType>(request.urlWithParams);
+                return this.http.delete<EntityType>(request.request.urlWithParams);
             default:
                 return;
         }
@@ -207,9 +282,9 @@ export abstract class BaseOfflineService {
      * @param request - The request that should be checked.
      * @returns Whether or no the given request has an unresolved dependency.
      */
-    protected hasUnresolvedDependency(request: HttpRequest<unknown>): boolean {
-        return request.urlWithParams.includes('offline')
-            || `${request.body}`.includes('offline');
+    hasUnresolvedDependency(request: CachedRequest<unknown>): boolean {
+        return request.request.urlWithParams.includes(this.OFFLINE_ID_PREFIX)
+            || `${request.request.body}`.includes(this.OFFLINE_ID_PREFIX);
     }
 
     /**
@@ -217,7 +292,8 @@ export abstract class BaseOfflineService {
      *
      * @param request - The request that should be removed.
      */
-    removeSingleRequest(request: HttpRequest<unknown>): void {
+    removeSingleRequest(request: CachedRequest<unknown>): void {
         this.cachedRequests.splice(this.cachedRequests.indexOf(request), 1);
+        this.cachedRequests = this.cachedRequests;
     }
 }

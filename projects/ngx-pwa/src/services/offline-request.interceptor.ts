@@ -1,18 +1,20 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BaseOfflineService, NGX_OFFLINE_SERVICE } from './offline.service';
+import { CachedRequest, NgxPwaOfflineService, NGX_PWA_OFFLINE_SERVICE } from './offline.service';
 import { HttpMethod } from '../models/http-method.enum';
 import { UuidUtilities } from '../encapsulation/uuid.utilities';
+import { NGX_PWA_HTTP_CONTEXT_METADATA } from '../models/request-metadata.model';
+import { RequestMetadataInternal } from '../models/request-metadata-internal.model';
 
 /**
  * An interceptor that caches any POST, UPDATE or DELETE requests when the user is offline.
  */
 @Injectable()
-export class OfflineRequestInterceptor<OfflineServiceType extends BaseOfflineService> implements HttpInterceptor {
+export class OfflineRequestInterceptor<OfflineServiceType extends NgxPwaOfflineService> implements HttpInterceptor {
 
     constructor(
-        @Inject(NGX_OFFLINE_SERVICE)
+        @Inject(NGX_PWA_OFFLINE_SERVICE)
         private readonly offlineService: OfflineServiceType,
     ) { }
 
@@ -21,14 +23,26 @@ export class OfflineRequestInterceptor<OfflineServiceType extends BaseOfflineSer
         if (!this.requestShouldBeCached(req)) {
             return next.handle(req);
         }
-        if (req.method === HttpMethod.POST) {
-            if (req.body == null) {
-                return next.handle(req);
-            }
-            (req.body[this.offlineService.getIdKeyFromRequest(req)] as string) = `offline ${UuidUtilities.generate()}`;
+        const metadata = this.getRequestMetadata(req);
+        if (req.method === HttpMethod.POST && req.body != null) {
+            (req.body[metadata.idKey] as unknown as string) = `${this.offlineService.OFFLINE_ID_PREFIX} ${UuidUtilities.generate()}`;
         }
-        this.offlineService.cachedRequests.concat(req);
+        const cachedRequest: CachedRequest<T> = {
+            request: req,
+            metadata: metadata
+        };
+        this.offlineService.cachedRequests = this.offlineService.cachedRequests.concat(cachedRequest);
         return next.handle(req);
+    }
+
+    private getRequestMetadata(request: HttpRequest<unknown>): RequestMetadataInternal {
+        const metadata = request.context.get(NGX_PWA_HTTP_CONTEXT_METADATA);
+        if (!metadata) {
+            // eslint-disable-next-line no-console
+            console.error('No metadata for the request', request.urlWithParams, ' was found.\nUsing fallback default values.');
+        }
+        const internalMetadata = new RequestMetadataInternal(request, metadata);
+        return internalMetadata;
     }
 
     private requestShouldBeCached(req: HttpRequest<unknown>): boolean {
@@ -43,6 +57,7 @@ export class OfflineRequestInterceptor<OfflineServiceType extends BaseOfflineSer
 
     private urlShouldNotBeCached(url: string): boolean {
         return url.endsWith('/login')
+            || url.endsWith('/register')
             || url.endsWith('/refresh-token')
             || url.endsWith('/request-reset-password')
             || url.endsWith('/confirm-reset-password')

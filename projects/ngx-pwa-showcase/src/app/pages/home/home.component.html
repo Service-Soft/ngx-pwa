@@ -1,0 +1,24 @@
+<h1>Home</h1>
+<p>
+    This project showcases functionality of the ngx-pwa library.
+</p>
+
+<hr>
+
+<button mat-raised-button (click)="offlineService.isOffline = !offlineService.isOffline">Toggle Offline</button>
+
+<button style="margin-left: 20px;" mat-raised-button (click)="sendPostRequest()">POST</button>
+<button style="margin-left: 20px;" mat-raised-button (click)="sendPatchRequest()">PATCH</button>
+<button style="margin-left: 20px;" mat-raised-button (click)="sendDeleteRequest()">DELETE</button>
+
+<hr>
+
+<button mat-raised-button (click)="notificationService.askForNotificationPermission()">Ask for Push Notification</button>
+
+<button mat-raised-button style="margin-left: 20px;" (click)="sendPushNotification()">Send push notification</button>
+
+<hr>
+
+<button mat-raised-button (click)="updateService.checkForUpdates()">Manually check for updates</button>
+
+<button mat-raised-button style="margin-left: 20px;" (click)="openVersionReadyDialog()">Open Version Ready Dialog</button>

@@ -1,0 +1,31 @@
+name: CI/CD
+# Controls when the action will run.
+on: push
+# workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+    test:
+        # The type of runner that the job will run on
+        runs-on: ubuntu-latest
+        steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - uses: actions/checkout@v3
+            # runs npm i inside the root directory
+            - name: npm i root
+              run: |
+                  cd $GITHUB_WORKSPACE
+                  npm i
+            # runs npm i inside the ngx-pwa directory
+            - name: npm i
+              run: |
+                  cd $GITHUB_WORKSPACE/projects/ngx-pwa
+                  npm i
+            # builds the library
+            - name: build package
+              run: |
+                  cd $GITHUB_WORKSPACE
+                  npm run build:prod
+            # runs linting
+            - name: Linting
+              run: |
+                  cd $GITHUB_WORKSPACE
+                  npm run lint

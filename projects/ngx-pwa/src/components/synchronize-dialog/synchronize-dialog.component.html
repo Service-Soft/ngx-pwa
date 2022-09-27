@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>{{dialogData.title}}</h1>
+<div mat-dialog-content>
+    <div class="all-button-row">
+        <button mat-raised-button [disabled]="offlineService.isOffline" (click)="syncAll()">
+            {{dialogData.syncAllButtonLabel}}
+        </button>
+        <button mat-raised-button (click)="undoAll()">
+            {{dialogData.undoAllButtonLabel}}
+        </button>
+    </div>
+    <div class="mat-elevation-z4 request-box">
+        <div *ngFor="let request of offlineService.cachedRequests">
+            <div class="request-item">
+                <div [innerHtml]="sanitizer.bypassSecurityTrustHtml(PurifyUtilities.sanitize(request.metadata.displayValue))">
+                </div>
+                <span>
+                    <button mat-icon-button (click)="syncSingleRequest(request)" [disabled]="offlineService.isOffline || offlineService.hasUnresolvedDependency(request)">
+                        <i class="fas fa-upload"></i>
+                    </button>
+                    <button mat-icon-button (click)="removeSingleRequest(request)" color="warn">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </span>
+            </div>
+            <mat-divider></mat-divider>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button class="cancel-button" (click)="close()">{{dialogData.closeButtonLabel}}</button>
+</div>

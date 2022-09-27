@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+    pull_request:
+        types: [closed]
+        branches:
+            - release
+
+jobs:
+    build:
+        if: github.event.pull_request.merged
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  # The branch, tag or SHA to checkout. When checking out the repository that
+                  # triggered a workflow, this defaults to the reference or SHA for that event.
+                  # Otherwise, defaults to `master`.
+                  ref: "dev"
+            - name: npm install
+              run: |
+                  cd $GITHUB_WORKSPACE
+                  npm i
+            - name: build package
+              run: |
+                  cd $GITHUB_WORKSPACE
+                  npm run build:prod
+            - name: publish to npm
+              uses: JS-DevTools/npm-publish@v1
+              with:
+                  token: ${{ secrets.NPM_TOKEN }}
+                  package: ./dist/ngx-pwa/package.json

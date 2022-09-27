@@ -1,0 +1,19 @@
+.mat-dialog-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+
+    button {
+        flex: 50%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .mat-dialog-actions {
+        flex-wrap: wrap;
+
+        button {
+            flex: 100%;
+        }
+    }
+}

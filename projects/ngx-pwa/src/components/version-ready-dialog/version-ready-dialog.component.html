@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>{{versionReadyDialogData.title}}</h1>
+<div mat-dialog-content>
+    {{versionReadyDialogData.message}}
+</div>
+<div class="mat-dialog-actions" mat-dialog-actions>
+    <button mat-raised-button (click)="update()">{{versionReadyDialogData.confirmButtonLabel}}</button>
+    <button mat-raised-button (click)="cancel()">{{versionReadyDialogData.cancelButtonLabel}}</button>
+</div>
