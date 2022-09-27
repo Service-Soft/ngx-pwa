@@ -151,14 +151,12 @@ export class NgxPwaOfflineService {
      */
     private readonly cachedRequestsSubject: BehaviorSubject<CachedRequest<unknown>[]>;
 
-    // eslint-disable-next-line jsdoc/require-returns
     /**
      * The currently stored cached requests (if there are any).
      */
     get cachedRequests(): CachedRequest<unknown>[] {
         return this.cachedRequestsSubject.value;
     }
-    // eslint-disable-next-line jsdoc/require-jsdoc
     set cachedRequests(cachedRequests: CachedRequest<unknown>[]) {
         localStorage.setItem(this.CACHED_REQUESTS_KEY, JSON.stringify(cachedRequests));
         this.cachedRequestsSubject.next(cachedRequests);
@@ -209,7 +207,6 @@ export class NgxPwaOfflineService {
                     res.splice(res.findIndex(e => req.request.urlWithParams.includes(`${e[deleteIdKey]}`)), 1);
                     break;
                 default:
-                    // eslint-disable-next-line no-console
                     console.error('There was an unknown http-method in one of your cached offline requests:', req.request.method);
                     break;
             }
@@ -281,7 +278,6 @@ export class NgxPwaOfflineService {
      * The recursive method used to syn all requests to the api.
      */
     protected async syncAllRecursive(): Promise<void> {
-        // eslint-disable-next-line max-len
         const request = this.cachedRequests.find(r => !this.hasUnresolvedDependency(r)) as CachedRequest<BaseEntityType<unknown>> | undefined;
         if (!request) {
             return;
@@ -450,7 +446,6 @@ export class OfflineRequestInterceptor<OfflineServiceType extends NgxPwaOfflineS
         private readonly offlineService: OfflineServiceType,
     ) { }
 
-    // eslint-disable-next-line jsdoc/require-jsdoc
     intercept<T>(req: HttpRequest<T>, next: HttpHandler): Observable<HttpEvent<T>> {
         if (!this.requestShouldBeCached(req)) {
             return next.handle(req);
@@ -470,7 +465,6 @@ export class OfflineRequestInterceptor<OfflineServiceType extends NgxPwaOfflineS
     private getRequestMetadata(request: HttpRequest<unknown>): RequestMetadataInternal {
         const metadata = request.context.get(NGX_PWA_HTTP_CONTEXT_METADATA);
         if (!metadata) {
-            // eslint-disable-next-line no-console
             console.error('No metadata for the request', request.urlWithParams, ' was found.\nUsing fallback default values.');
         }
         const internalMetadata = new RequestMetadataInternal(request, metadata);
@@ -661,7 +655,6 @@ this.dialog.open(NgxPwaSynchronizeDialogComponent);
 })
 export class NgxPwaSynchronizeDialogComponent<OfflineServiceType extends NgxPwaOfflineService> implements OnInit {
 
-    // eslint-disable-next-line jsdoc/require-jsdoc
     PurifyUtilities = PurifyUtilities;
 
     /**

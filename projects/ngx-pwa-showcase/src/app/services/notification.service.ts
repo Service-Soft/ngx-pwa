@@ -11,6 +11,7 @@ export class NotificationService extends NgxPwaNotificationService {
 
     readonly API_ENABLE_NOTIFICATIONS_URL: string = `${environment.apiUrl}/enable-notifications`;
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     readonly VAPID_PUBLIC_KEY: string = SECRETS.publicKey;
 
     constructor(private readonly push: SwPush, private readonly httpClient: HttpClient) {
