@@ -759,11 +759,12 @@ You need to extend your own notification service:
 ...
 import { NgxPwaNotificationService } from 'ngx-pwa';
 ...
-
 @Injectable({providedIn: 'root'})
 export class NotificationService extends NgxPwaNotificationService {
 
     readonly API_ENABLE_NOTIFICATIONS_URL: string = 'url';
+
+    readonly API_DISABLE_NOTIFICATIONS_URL: string = 'url;
 
     readonly VAPID_PUBLIC_KEY: string = 'my public key';
 
@@ -782,11 +783,15 @@ Now you can call its `askForNotificationPermission` method which will prompt for
  * A base service that provides functionality regarding notifications.
  */
 export abstract class NgxPwaNotificationService {
-
     /**
      * The url to send a new push subscription to.
      */
     abstract readonly API_ENABLE_NOTIFICATIONS_URL: string;
+
+    /**
+     * The url to send a request to when wanting to disable notifications.
+     */
+    abstract readonly API_DISABLE_NOTIFICATIONS_URL: string;
 
     /**
      * The public key of your VAPID key pair.
@@ -794,15 +799,21 @@ export abstract class NgxPwaNotificationService {
      */
     abstract readonly VAPID_PUBLIC_KEY: string;
 
+    /**
+     * Whether or not the current user has notifications enabled.
+     */
+    get hasNotificationsEnabled(): boolean {
+        return this.swPush.isEnabled;
+    }
+
     constructor(private readonly swPush: SwPush, private readonly http: HttpClient) {}
 
     /**
      * Asks the user for permission to use push notifications.
      */
-    askForNotificationPermission(): void {
-        void this.swPush.requestSubscription({ serverPublicKey: this.VAPID_PUBLIC_KEY })
-            .then(pushSubscription => this.enableNotifications(pushSubscription))
-            .catch();
+    async askForNotificationPermission(): Promise<void> {
+        const pushSubscription = await this.swPush.requestSubscription({ serverPublicKey: this.VAPID_PUBLIC_KEY });
+        void this.enableNotifications(pushSubscription);
     }
 
     /**
@@ -812,6 +823,18 @@ export abstract class NgxPwaNotificationService {
      */
     protected async enableNotifications(pushSubscription: PushSubscription): Promise<void> {
         await firstValueFrom(this.http.post(this.API_ENABLE_NOTIFICATIONS_URL, pushSubscription));
+    }
+
+    /**
+     * Disables notifications.
+     */
+    async disableNotifications(): Promise<void> {
+        const pushSubscription = await firstValueFrom(this.swPush.subscription);
+        if (!pushSubscription) {
+            return;
+        }
+        await firstValueFrom(this.http.post(this.API_DISABLE_NOTIFICATIONS_URL, pushSubscription));
+        await this.swPush.unsubscribe();
     }
 }
 ```
