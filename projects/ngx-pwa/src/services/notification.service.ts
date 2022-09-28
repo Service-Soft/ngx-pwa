@@ -55,7 +55,7 @@ export abstract class NgxPwaNotificationService {
      */
     async disableNotifications(): Promise<void> {
         const pushSubscription = await firstValueFrom(this.swPush.subscription);
-        if (!pushSubscription) {
+        if (pushSubscription == null) {
             return;
         }
         await firstValueFrom(this.http.post(this.API_DISABLE_NOTIFICATIONS_URL, pushSubscription));
