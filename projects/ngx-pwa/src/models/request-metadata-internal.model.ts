@@ -21,7 +21,7 @@ export class RequestMetadataInternal implements RequestMetadata {
 }
 
 function defaultCachedRequestMetadata(req: HttpRequest<unknown>): string {
-    const color = getColorForHttpMethod(req.method);
+    const color: string = getColorForHttpMethod(req.method);
     return `<b style="color: ${color};">${req.method}</b> ${req.url}`;
 }
 

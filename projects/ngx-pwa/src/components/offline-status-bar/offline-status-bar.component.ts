@@ -41,7 +41,7 @@ export class NgxPwaOfflineStatusBarComponent<OfflineServiceType extends NgxPwaOf
 
     constructor(
         @Inject(NGX_PWA_OFFLINE_SERVICE)
-        readonly offlineService: OfflineServiceType,
+        readonly offlineService: OfflineServiceType
     ) { }
 
     ngOnInit(): void {
