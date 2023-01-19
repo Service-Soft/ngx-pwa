@@ -37,7 +37,7 @@ export abstract class NgxPwaNotificationService {
      * Asks the user for permission to use push notifications.
      */
     async askForNotificationPermission(): Promise<void> {
-        const pushSubscription = await this.swPush.requestSubscription({ serverPublicKey: this.VAPID_PUBLIC_KEY });
+        const pushSubscription: PushSubscription = await this.swPush.requestSubscription({ serverPublicKey: this.VAPID_PUBLIC_KEY });
         void this.enableNotifications(pushSubscription);
     }
 
@@ -54,7 +54,7 @@ export abstract class NgxPwaNotificationService {
      * Disables notifications.
      */
     async disableNotifications(): Promise<void> {
-        const pushSubscription = await firstValueFrom(this.swPush.subscription);
+        const pushSubscription: PushSubscription | null = await firstValueFrom(this.swPush.subscription);
         if (pushSubscription == null) {
             return;
         }

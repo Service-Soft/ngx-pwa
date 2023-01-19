@@ -1,4 +1,25 @@
 {
     "root": true,
-    "extends": "eslint-config-service-soft"
+    "extends": "eslint-config-service-soft",
+    "overrides": [
+        {
+            "files": [
+                "*.ts"
+            ],
+            "parserOptions": {
+                "project": [
+                    "tsconfig.json"
+                ],
+                "createDefaultProgram": true
+            },
+            "rules": {
+                "@cspell/spellchecker": [
+                    "warn",
+                    {
+                        "customWordListFile": "./cspell.words.txt"
+                    }
+                ]
+            }
+        }
+    ]
 }

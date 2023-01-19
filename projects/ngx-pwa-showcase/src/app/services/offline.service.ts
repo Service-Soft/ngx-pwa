@@ -4,7 +4,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgxPwaOfflineService } from 'ngx-pwa';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class OfflineService extends NgxPwaOfflineService {
     constructor(
         private readonly httpClient: HttpClient,

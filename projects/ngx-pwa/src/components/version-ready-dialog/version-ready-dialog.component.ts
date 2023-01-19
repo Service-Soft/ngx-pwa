@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { VersionReadyDialogDataInternal } from '../../models/version-ready-dialog-data-internal.model';
 import { VersionReadyDialogData } from '../../models/version-ready-dialog-data.model';
 
@@ -13,7 +13,8 @@ import { VersionReadyDialogData } from '../../models/version-ready-dialog-data.m
     styleUrls: ['./version-ready-dialog.component.scss'],
     standalone: true,
     imports: [
-        MatButtonModule
+        MatButtonModule,
+        MatDialogModule
     ]
 })
 export class NgxPwaVersionReadyDialogComponent implements OnInit {
@@ -27,7 +28,7 @@ export class NgxPwaVersionReadyDialogComponent implements OnInit {
     constructor(
         private readonly dialogRef: MatDialogRef<NgxPwaVersionReadyDialogComponent>,
         @Inject(MAT_DIALOG_DATA)
-        readonly data?: VersionReadyDialogData,
+        readonly data?: VersionReadyDialogData
     ) { }
 
     ngOnInit(): void {
