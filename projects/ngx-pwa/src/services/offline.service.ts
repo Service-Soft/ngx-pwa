@@ -1,9 +1,9 @@
 import { HttpClient, HttpRequest } from '@angular/common/http';
 import { InjectionToken, NgZone } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { LodashUtilities } from '../encapsulation/lodash.utilities';
 import { HttpMethod } from '../models/http-method.enum';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestMetadataInternal } from '../models/request-metadata-internal.model';
 
 /**
@@ -11,16 +11,20 @@ import { RequestMetadataInternal } from '../models/request-metadata-internal.mod
  */
 export type BaseEntityType<T> = { [K in keyof T]: unknown };
 
-export const NGX_PWA_OFFLINE_SERVICE = new InjectionToken('Provider for the OfflineService used eg. in the offline request interceptor.', {
-    providedIn: 'root',
-    factory: () => {
+// eslint-disable-next-line @typescript-eslint/typedef
+export const NGX_PWA_OFFLINE_SERVICE = new InjectionToken(
+    'Provider for the OfflineService used eg. in the offline request interceptor.',
+    {
+        providedIn: 'root',
+        factory: () => {
         // eslint-disable-next-line no-console
-        console.error(
+            console.error(
             // eslint-disable-next-line max-len
-            'No OfflineService has been provided for the token NGX_OFFLINE_SERVICE\nAdd this to your app.module.ts provider array:\n{\n    provide: NGX_PWA_OFFLINE_SERVICE,\n    useExisting: MyOfflineService\n}',
-        );
-    },
-});
+                'No OfflineService has been provided for the token NGX_OFFLINE_SERVICE\nAdd this to your app.module.ts provider array:\n{\n    provide: NGX_PWA_OFFLINE_SERVICE,\n    useExisting: MyOfflineService\n}'
+            );
+        }
+    }
+);
 
 /**
  * The type of a cached offline request.
@@ -105,8 +109,8 @@ export class NgxPwaOfflineService {
         window.ononline = () => this.isOffline = !navigator.onLine;
         window.onoffline = () => this.isOffline = !navigator.onLine;
 
-        const stringData = localStorage.getItem(this.CACHED_REQUESTS_KEY);
-        const requestsData = stringData ? JSON.parse(stringData) as CachedRequest<unknown>[] : [];
+        const stringData: string | null = localStorage.getItem(this.CACHED_REQUESTS_KEY);
+        const requestsData: CachedRequest<unknown>[] = stringData ? JSON.parse(stringData) as CachedRequest<unknown>[] : [];
         this.cachedRequestsSubject = new BehaviorSubject(requestsData);
     }
 
@@ -125,7 +129,7 @@ export class NgxPwaOfflineService {
             return entities;
         }
         const res: EntityType[] = Array.from(entities);
-        const cachedRequests = this.cachedRequests.filter(req => req.metadata.type === type);
+        const cachedRequests: CachedRequest<unknown>[] = this.cachedRequests.filter(req => req.metadata.type === type);
         for (const req of cachedRequests) {
             switch (req.request.method) {
                 case HttpMethod.POST:
@@ -133,7 +137,7 @@ export class NgxPwaOfflineService {
                     break;
                 case HttpMethod.PATCH:
                     const patchIdKey: keyof EntityType = req.metadata.idKey;
-                    const index = res.findIndex(e => req.request.urlWithParams.includes(`${e[patchIdKey]}`));
+                    const index: number = res.findIndex(e => req.request.urlWithParams.includes(`${e[patchIdKey]}`));
                     res[index] = this.updateOffline(req.request.body as EntityType, res[index]);
                     break;
                 case HttpMethod.DELETE:
@@ -172,9 +176,9 @@ export class NgxPwaOfflineService {
      * @param request - The request that should be synced.
      */
     async sync<T>(request: CachedRequest<T>): Promise<void> {
-        const cachedRequestsPriorChanges = LodashUtilities.cloneDeep(this.cachedRequests);
+        const cachedRequestsPriorChanges: CachedRequest<unknown>[] = LodashUtilities.cloneDeep(this.cachedRequests);
         try {
-            const res = await this.syncSingleRequest(request);
+            const res: Awaited<T> = await this.syncSingleRequest(request);
             this.zone.run(() => {
                 this.snackBar.open(this.SINGLE_SYNC_FINISHED_SNACK_BAR_MESSAGE, undefined, { duration: 2500 });
             });
@@ -193,7 +197,7 @@ export class NgxPwaOfflineService {
      * Sends all cached requests to the server. Tries to handle dependencies of requests on each other.
      */
     async syncAll(): Promise<void> {
-        const cachedRequestsPriorChanges = LodashUtilities.cloneDeep(this.cachedRequests);
+        const cachedRequestsPriorChanges: CachedRequest<unknown>[] = LodashUtilities.cloneDeep(this.cachedRequests);
         try {
             await this.syncAllRecursive();
             this.zone.run(() => {
@@ -214,11 +218,11 @@ export class NgxPwaOfflineService {
      */
     protected async syncAllRecursive(): Promise<void> {
         // eslint-disable-next-line max-len
-        const request = this.cachedRequests.find(r => !this.hasUnresolvedDependency(r)) as CachedRequest<BaseEntityType<unknown>> | undefined;
+        const request: CachedRequest<BaseEntityType<unknown>> | undefined = this.cachedRequests.find(r => !this.hasUnresolvedDependency(r)) as CachedRequest<BaseEntityType<unknown>> | undefined;
         if (!request) {
             return;
         }
-        const res = await this.syncSingleRequest(request);
+        const res: BaseEntityType<unknown> = await this.syncSingleRequest(request);
         this.updateOfflineIdsInRequests(request, res);
         await this.syncAllRecursive();
     }
@@ -235,7 +239,7 @@ export class NgxPwaOfflineService {
         if (this.isOffline || this.hasUnresolvedDependency(request)) {
             throw new Error();
         }
-        const requestObservable = this.request(request);
+        const requestObservable: Observable<T> | undefined = this.request(request);
         if (!requestObservable) {
             throw new Error();
         }
@@ -244,9 +248,10 @@ export class NgxPwaOfflineService {
 
     private updateOfflineIdsInRequests<T>(request: CachedRequest<T>, res: T): void {
         if (this.cachedRequests.length && request.request.body != null) {
-            const idKey = request.metadata.idKey;
+            const idKey: keyof BaseEntityType<unknown> = request.metadata.idKey;
             if (res[idKey] != null) {
-                const requestsString = `${this.cachedRequests}`.split(request.request.body[idKey] as string).join(res[idKey] as string);
+                // eslint-disable-next-line max-len
+                const requestsString: string = `${this.cachedRequests}`.split(request.request.body[idKey] as string).join(res[idKey] as string);
                 this.cachedRequests = JSON.parse(requestsString) as CachedRequest<T>[];
             }
         }
@@ -272,7 +277,7 @@ export class NgxPwaOfflineService {
             case HttpMethod.DELETE:
                 return this.http.delete<EntityType>(request.request.urlWithParams);
             default:
-                return;
+                return undefined;
         }
     }
 

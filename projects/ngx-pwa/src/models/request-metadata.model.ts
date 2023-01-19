@@ -24,4 +24,5 @@ export interface RequestMetadata {
     displayValue?: string
 }
 
-export const NGX_PWA_HTTP_CONTEXT_METADATA = new HttpContextToken<RequestMetadata | undefined>(() => undefined);
+// eslint-disable-next-line max-len
+export const NGX_PWA_HTTP_CONTEXT_METADATA: HttpContextToken<RequestMetadata | undefined> = new HttpContextToken<RequestMetadata | undefined>(() => undefined);

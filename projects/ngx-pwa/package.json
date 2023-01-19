@@ -1,6 +1,6 @@
 {
     "name": "ngx-pwa",
-    "version": "1.0.0",
+    "version": "15.0.0",
     "license": "MIT",
     "keywords": [
         "angular",
@@ -11,10 +11,10 @@
         "background-sync"
     ],
     "peerDependencies": {
-        "@angular/common": "14",
-        "@angular/core": "14",
-        "@angular/material": "14",
-        "@angular/service-worker": "14",
+        "@angular/common": "15",
+        "@angular/core": "15",
+        "@angular/material": "15",
+        "@angular/service-worker": "15",
         "uuid": "9",
         "lodash": "4",
         "dompurify": "2"

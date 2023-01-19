@@ -1,4 +1,4 @@
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SwUpdate } from '@angular/service-worker';
 import { firstValueFrom } from 'rxjs';
 import { NgxPwaVersionReadyDialogComponent } from '../components/version-ready-dialog/version-ready-dialog.component';
@@ -60,8 +60,14 @@ export class NgxPwaUpdateService {
      * Gets called when a new version has been installed.
      */
     protected async onVersionReady(): Promise<void> {
-        const dialogRef = this.dialog.open(NgxPwaVersionReadyDialogComponent, { autoFocus: false, restoreFocus: false });
-        const res = await firstValueFrom(dialogRef.afterClosed()) as 'update' | 'cancel';
+        const dialogRef: MatDialogRef<NgxPwaVersionReadyDialogComponent> = this.dialog.open(
+            NgxPwaVersionReadyDialogComponent,
+            {
+                autoFocus: false,
+                restoreFocus: false
+            }
+        );
+        const res: 'update' | 'cancel' = await firstValueFrom(dialogRef.afterClosed()) as 'update' | 'cancel';
         if (res === 'update') {
             window.location.reload();
         }
