@@ -5,20 +5,20 @@
 
 <hr>
 
-<button mat-raised-button (click)="offlineService.isOffline = !offlineService.isOffline">Toggle Offline</button>
+<button type="button" mat-raised-button (click)="offlineService.isOffline = !offlineService.isOffline">Toggle Offline</button>
 
-<button style="margin-left: 20px;" mat-raised-button (click)="sendPostRequest()">POST</button>
-<button style="margin-left: 20px;" mat-raised-button (click)="sendPatchRequest()">PATCH</button>
-<button style="margin-left: 20px;" mat-raised-button (click)="sendDeleteRequest()">DELETE</button>
-
-<hr>
-
-<button mat-raised-button (click)="notificationService.askForNotificationPermission()">Ask for Push Notification</button>
-
-<button mat-raised-button style="margin-left: 20px;" (click)="sendPushNotification()">Send push notification</button>
+<button type="button" style="margin-left: 20px;" mat-raised-button (click)="sendPostRequest()">POST</button>
+<button type="button" style="margin-left: 20px;" mat-raised-button (click)="sendPatchRequest()">PATCH</button>
+<button type="button" style="margin-left: 20px;" mat-raised-button (click)="sendDeleteRequest()">DELETE</button>
 
 <hr>
 
-<button mat-raised-button (click)="updateService.checkForUpdates()">Manually check for updates</button>
+<button type="button" mat-raised-button (click)="notificationService.askForNotificationPermission()">Ask for Push Notification</button>
 
-<button mat-raised-button style="margin-left: 20px;" (click)="openVersionReadyDialog()">Open Version Ready Dialog</button>
+<button type="button" mat-raised-button style="margin-left: 20px;" (click)="sendPushNotification()">Send push notification</button>
+
+<hr>
+
+<button type="button" mat-raised-button (click)="updateService.checkForUpdates()">Manually check for updates</button>
+
+<button type="button" mat-raised-button style="margin-left: 20px;" (click)="openVersionReadyDialog()">Open Version Ready Dialog</button>
