@@ -1,16 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @cspell/spellchecker */
+import * as bodyParser from 'body-parser';
+import * as cors from 'cors';
 import * as express from 'express';
 import { Application } from 'express';
-import * as SECRETS from './secrets.json';
-// import {readAllLessons} from './read-all-lessons.route';
-// import {addPushSubscriber} from './add-push-subscriber.route';
-// import {sendNewsletter} from './send-newsletter.route';
-import * as bodyParser from 'body-parser';
 import * as webpush from 'web-push';
-import { sendNotification } from './send-notification.route';
 import { addPushSubscription } from './add-push-subscriber.route';
 import { PUSH_SUBSCRIPTIONS } from './in-memory-db';
-import * as cors from 'cors';
+import { SECRETS } from './secrets';
+import { sendNotification } from './send-notification.route';
 
 webpush.setVapidDetails(
     `mailto:${SECRETS.email}`,
