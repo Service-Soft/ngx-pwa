@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PurifyUtilities } from '../../encapsulation/purify.utilities';
-import { CachedRequest, NgxPwaOfflineService, NGX_PWA_OFFLINE_SERVICE } from '../../services/offline.service';
-import { SynchronizeDialogData } from '../../models/synchronize-dialog-data.model';
 import { SynchronizeDialogDataInternal } from '../../models/synchronize-dialog-data-internal.model';
+import { SynchronizeDialogData } from '../../models/synchronize-dialog-data.model';
+import { CachedRequest, NGX_PWA_OFFLINE_SERVICE, NgxPwaOfflineService } from '../../services/offline.service';
 
 /**
  * The dialog for syncing cached requests to the server.
@@ -27,7 +27,7 @@ import { SynchronizeDialogDataInternal } from '../../models/synchronize-dialog-d
 export class NgxPwaSynchronizeDialogComponent<OfflineServiceType extends NgxPwaOfflineService> implements OnInit {
 
     // eslint-disable-next-line jsdoc/require-jsdoc
-    PurifyUtilities = PurifyUtilities;
+    PurifyUtilities: typeof PurifyUtilities = PurifyUtilities;
 
     /**
      * The provided dialog data filled up with default values.

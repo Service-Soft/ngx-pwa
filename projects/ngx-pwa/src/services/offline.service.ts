@@ -1,7 +1,7 @@
 import { HttpClient, HttpRequest } from '@angular/common/http';
 import { InjectionToken, NgZone } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 import { LodashUtilities } from '../encapsulation/lodash.utilities';
 import { HttpMethod } from '../models/http-method.enum';
 import { RequestMetadataInternal } from '../models/request-metadata-internal.model';
@@ -48,33 +48,33 @@ export class NgxPwaOfflineService {
     /**
      * The key under which any requests are saved in local storage.
      */
-    readonly CACHED_REQUESTS_KEY = 'requests';
+    readonly CACHED_REQUESTS_KEY: string = 'requests';
 
     /**
      * The prefix of offline generated ids.
      * Is used to check if a request still has unresolved dependencies.
      */
-    readonly OFFLINE_ID_PREFIX = 'offline';
+    readonly OFFLINE_ID_PREFIX: string = 'offline';
 
     /**
      * A snackbar message to display when the synchronization of all cached requests has been finished.
      */
-    protected readonly ALL_SYNC_FINISHED_SNACK_BAR_MESSAGE = 'Synchronization finished';
+    protected readonly ALL_SYNC_FINISHED_SNACK_BAR_MESSAGE: string = 'Synchronization finished';
 
     /**
      * A snackbar message to display when the synchronization of all cached requests fails.
      */
-    protected readonly ALL_SYNC_FAILED_SNACK_BAR_MESSAGE = 'Synchronization failed, please try again later';
+    protected readonly ALL_SYNC_FAILED_SNACK_BAR_MESSAGE: string = 'Synchronization failed, please try again later';
 
     /**
      * A snackbar message to display when the synchronization of a single cached requests has been finished.
      */
-    protected readonly SINGLE_SYNC_FINISHED_SNACK_BAR_MESSAGE = 'Synchronization finished';
+    protected readonly SINGLE_SYNC_FINISHED_SNACK_BAR_MESSAGE: string = 'Synchronization finished';
 
     /**
      * A snackbar message to display when the synchronization of a single cached requests fails.
      */
-    protected readonly SINGLE_SYNC_FAILED_SNACK_BAR_MESSAGE = 'Synchronization failed, please try again later';
+    protected readonly SINGLE_SYNC_FAILED_SNACK_BAR_MESSAGE: string = 'Synchronization failed, please try again later';
 
     /**
      * Whether or not the user has no internet connection.
