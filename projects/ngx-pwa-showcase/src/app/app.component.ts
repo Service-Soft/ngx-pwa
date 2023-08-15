@@ -1,5 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import { AfterContentChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FooterRow, NavbarRow } from 'ngx-material-navigation';
 import { navbarRows } from './navigation.data';
 import { OfflineService } from './services/offline.service';
 import { UpdateService } from './services/update.service';
@@ -11,8 +12,8 @@ import { UpdateService } from './services/update.service';
 })
 export class AppComponent implements OnInit, AfterContentChecked {
 
-    navbarRows = navbarRows;
-    footerRows = [];
+    navbarRows: NavbarRow[] = navbarRows;
+    footerRows: FooterRow[] = [];
 
     @ViewChild('footer', { read: ElementRef })
     footer?: ElementRef<HTMLElement>;
