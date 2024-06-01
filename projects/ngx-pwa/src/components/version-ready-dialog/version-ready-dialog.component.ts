@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 import { VersionReadyDialogDataInternal } from '../../models/version-ready-dialog-data-internal.model';
 import { VersionReadyDialogData } from '../../models/version-ready-dialog-data.model';
 

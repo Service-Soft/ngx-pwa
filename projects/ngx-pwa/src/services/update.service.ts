@@ -1,6 +1,7 @@
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SwUpdate } from '@angular/service-worker';
 import { firstValueFrom } from 'rxjs';
+
 import { NgxPwaVersionReadyDialogComponent } from '../components/version-ready-dialog/version-ready-dialog.component';
 
 /**
@@ -75,7 +76,6 @@ export class NgxPwaUpdateService {
 
     /**
      * Manually checks for updates.
-     *
      * @returns Whether or not new updates are available.
      */
     async checkForUpdates(): Promise<boolean> {

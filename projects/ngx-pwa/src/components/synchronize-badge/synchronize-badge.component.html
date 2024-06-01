@@ -1,3 +1,5 @@
-<button type="button" mat-button *ngIf="offlineService.cachedRequests.length" (click)="openSyncDialog()">
-    <i class="fas fa-rotate" [matBadge]="offlineService.cachedRequests.length" matBadgePosition="above after" matBadgeColor="warn"></i>
-</button>
+@if (offlineService.cachedRequests.length) {
+    <button type="button" mat-button (click)="openSyncDialog()">
+        <i class="fas fa-rotate" matBadgePosition="above after" matBadgeColor="warn" [matBadge]="offlineService.cachedRequests.length"></i>
+    </button>
+}

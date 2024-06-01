@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { DomSanitizer } from '@angular/platform-browser';
+
 import { PurifyUtilities } from '../../encapsulation/purify.utilities';
 import { SynchronizeDialogDataInternal } from '../../models/synchronize-dialog-data-internal.model';
 import { SynchronizeDialogData } from '../../models/synchronize-dialog-data.model';
@@ -49,7 +50,6 @@ export class NgxPwaSynchronizeDialogComponent<OfflineServiceType extends NgxPwaO
 
     /**
      * Sends a specific cached request to the server.
-     *
      * @param request - The request that should be synced.
      */
     async syncSingleRequest(request: CachedRequest<unknown>): Promise<void> {
@@ -61,7 +61,6 @@ export class NgxPwaSynchronizeDialogComponent<OfflineServiceType extends NgxPwaO
 
     /**
      * Removes a single request from the cache.
-     *
      * @param request - The request that should be removed.
      */
     removeSingleRequest(request: CachedRequest<unknown>): void {
