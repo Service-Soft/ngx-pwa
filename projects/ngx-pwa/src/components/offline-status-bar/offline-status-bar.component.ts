@@ -1,6 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
+
 import { SynchronizeDialogData } from '../../models/synchronize-dialog-data.model';
 import { NgxPwaOfflineService, NGX_PWA_OFFLINE_SERVICE } from '../../services/offline.service';
+import { NgxPwaSynchronizeBadgeComponent } from '../synchronize-badge/synchronize-badge.component';
 
 /**
  * Shows a offline warning when the user is not online.
@@ -8,12 +11,16 @@ import { NgxPwaOfflineService, NGX_PWA_OFFLINE_SERVICE } from '../../services/of
 @Component({
     selector: 'ngx-pwa-offline-status-bar',
     templateUrl: './offline-status-bar.component.html',
-    styleUrls: ['./offline-status-bar.component.scss']
+    styleUrls: ['./offline-status-bar.component.scss'],
+    standalone: true,
+    imports: [
+        CommonModule,
+        NgxPwaSynchronizeBadgeComponent
+    ]
 })
 export class NgxPwaOfflineStatusBarComponent<OfflineServiceType extends NgxPwaOfflineService> implements OnInit {
     /**
      * The message to display when the user is offline.
-     *
      * @default 'Offline'
      */
     @Input()
@@ -21,7 +28,6 @@ export class NgxPwaOfflineStatusBarComponent<OfflineServiceType extends NgxPwaOf
 
     /**
      * The message to display when the user has changes that aren't synced to the api.
-     *
      * @default 'Unsaved Changes'
      */
     @Input()

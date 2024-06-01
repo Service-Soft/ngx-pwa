@@ -1,6 +1,9 @@
-/* eslint-disable jsdoc/require-jsdoc */
-import { AfterContentChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FooterRow, NavbarRow } from 'ngx-material-navigation';
+import { AfterContentChecked, Component, OnInit } from '@angular/core';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { RouterModule } from '@angular/router';
+import { NavbarRow, NgxMatNavigationNavbarComponent } from 'ngx-material-navigation';
+import { NgxPwaOfflineStatusBarComponent } from 'ngx-pwa';
+
 import { navbarRows } from './navigation.data';
 import { OfflineService } from './services/offline.service';
 import { UpdateService } from './services/update.service';
@@ -8,15 +11,18 @@ import { UpdateService } from './services/update.service';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    styleUrls: ['./app.component.scss'],
+    standalone: true,
+    imports: [
+        NgxMatNavigationNavbarComponent,
+        NgxPwaOfflineStatusBarComponent,
+        MatSnackBarModule,
+        RouterModule
+    ]
 })
 export class AppComponent implements OnInit, AfterContentChecked {
 
     navbarRows: NavbarRow[] = navbarRows;
-    footerRows: FooterRow[] = [];
-
-    @ViewChild('footer', { read: ElementRef })
-    footer?: ElementRef<HTMLElement>;
 
     otherElementsHeight: number = 0;
 
@@ -28,7 +34,6 @@ export class AppComponent implements OnInit, AfterContentChecked {
 
     ngAfterContentChecked(): void {
         let res: number = 0;
-        res += this.footer?.nativeElement.offsetHeight ?? 0;
         res += this.offlineService.isOffline || this.offlineService.cachedRequests.length ? 50 : 0;
         this.otherElementsHeight = res;
     }
