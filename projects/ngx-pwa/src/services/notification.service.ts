@@ -43,7 +43,6 @@ export abstract class NgxPwaNotificationService {
 
     /**
      * Enables notifications by sending a push subscription to the server.
-     *
      * @param pushSubscription - The push subscription to send to the server.
      */
     protected async enableNotifications(pushSubscription: PushSubscription): Promise<void> {
@@ -55,7 +54,7 @@ export abstract class NgxPwaNotificationService {
      */
     async disableNotifications(): Promise<void> {
         const pushSubscription: PushSubscription | null = await firstValueFrom(this.swPush.subscription);
-        if (pushSubscription == null) {
+        if (pushSubscription == undefined) {
             return;
         }
         await firstValueFrom(this.http.post(this.API_DISABLE_NOTIFICATIONS_URL, pushSubscription));

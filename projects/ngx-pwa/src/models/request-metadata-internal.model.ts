@@ -1,8 +1,9 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import { HttpRequest } from '@angular/common/http';
-import { BaseEntityType } from '../services/offline.service';
+
 import { HttpMethod } from './http-method.enum';
 import { RequestMetadata } from './request-metadata.model';
+import { BaseEntityType } from '../services/offline.service';
 
 /**
  * The internal request metadata.

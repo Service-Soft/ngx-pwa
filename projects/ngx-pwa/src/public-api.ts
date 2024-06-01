@@ -1,10 +1,8 @@
 /*
  * Public API Surface of ngx-pwa
  */
-export * from './components/offline-status-bar/offline-status-bar.module';
 export * from './components/offline-status-bar/offline-status-bar.component';
 
-export * from './components/synchronize-badge/synchronize-badge.module';
 export * from './components/synchronize-badge/synchronize-badge.component';
 
 export * from './components/synchronize-dialog/synchronize-dialog.component';

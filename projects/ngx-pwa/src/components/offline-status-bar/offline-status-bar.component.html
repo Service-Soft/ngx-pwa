@@ -1,7 +1,16 @@
-<div *ngIf="offlineService.isOffline">
-    {{offlineMessage}} <ngx-pwa-synchronize-badge [synchronizeDialogData]="synchronizeDialogData" *ngIf="displayUnsavedChangesSynchronizeBadge"></ngx-pwa-synchronize-badge>
-</div>
-<div *ngIf="!offlineService.isOffline && offlineService.cachedRequests.length">
-    {{unsavedChangesMessage}}
-    <ngx-pwa-synchronize-badge [synchronizeDialogData]="synchronizeDialogData" *ngIf="displayUnsavedChangesSynchronizeBadge"></ngx-pwa-synchronize-badge>
-</div>
+@if (offlineService.isOffline) {
+    <div>
+        {{offlineMessage}}
+        @if (displayUnsavedChangesSynchronizeBadge) {
+            <ngx-pwa-synchronize-badge [synchronizeDialogData]="synchronizeDialogData"></ngx-pwa-synchronize-badge>
+        }
+    </div>
+}
+@else if (offlineService.cachedRequests.length) {
+    <div>
+        {{unsavedChangesMessage}}
+        @if (displayUnsavedChangesSynchronizeBadge) {
+            <ngx-pwa-synchronize-badge [synchronizeDialogData]="synchronizeDialogData"></ngx-pwa-synchronize-badge>
+        }
+    </div>
+}

@@ -1,5 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component, Inject, Input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
 import { SynchronizeDialogData } from '../../models/synchronize-dialog-data.model';
 import { NGX_PWA_OFFLINE_SERVICE, NgxPwaOfflineService } from '../../services/offline.service';
 import { NgxPwaSynchronizeDialogComponent } from '../synchronize-dialog/synchronize-dialog.component';
@@ -11,7 +15,14 @@ import { NgxPwaSynchronizeDialogComponent } from '../synchronize-dialog/synchron
 @Component({
     selector: 'ngx-pwa-synchronize-badge',
     templateUrl: './synchronize-badge.component.html',
-    styleUrls: ['./synchronize-badge.component.scss']
+    styleUrls: ['./synchronize-badge.component.scss'],
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatBadgeModule,
+        MatDialogModule
+    ]
 })
 export class NgxPwaSynchronizeBadgeComponent<OfflineServiceType extends NgxPwaOfflineService> {
 

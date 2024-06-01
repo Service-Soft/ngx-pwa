@@ -1,11 +1,12 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+
+import { CachedRequest, NgxPwaOfflineService, NGX_PWA_OFFLINE_SERVICE } from './offline.service';
 import { UuidUtilities } from '../encapsulation/uuid.utilities';
 import { HttpMethod } from '../models/http-method.enum';
 import { RequestMetadataInternal } from '../models/request-metadata-internal.model';
 import { NGX_PWA_HTTP_CONTEXT_METADATA, RequestMetadata } from '../models/request-metadata.model';
-import { CachedRequest, NgxPwaOfflineService, NGX_PWA_OFFLINE_SERVICE } from './offline.service';
 
 /**
  * An interceptor that caches any POST, UPDATE or DELETE requests when the user is offline.
@@ -24,7 +25,7 @@ export class OfflineRequestInterceptor<OfflineServiceType extends NgxPwaOfflineS
             return next.handle(req);
         }
         const metadata: RequestMetadataInternal = this.getRequestMetadata(req);
-        if (req.method === HttpMethod.POST && req.body != null) {
+        if (req.method === HttpMethod.POST && req.body != undefined) {
             (req.body[metadata.idKey] as unknown as string) = `${this.offlineService.OFFLINE_ID_PREFIX} ${UuidUtilities.generate()}`;
         }
         const cachedRequest: CachedRequest<T> = {

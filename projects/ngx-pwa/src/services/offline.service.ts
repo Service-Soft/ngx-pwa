@@ -2,6 +2,7 @@ import { HttpClient, HttpRequest } from '@angular/common/http';
 import { InjectionToken, NgZone } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
+
 import { LodashUtilities } from '../encapsulation/lodash.utilities';
 import { HttpMethod } from '../models/http-method.enum';
 import { RequestMetadataInternal } from '../models/request-metadata-internal.model';
@@ -11,7 +12,7 @@ import { RequestMetadataInternal } from '../models/request-metadata-internal.mod
  */
 export type BaseEntityType<T> = { [K in keyof T]: unknown };
 
-// eslint-disable-next-line @typescript-eslint/typedef
+// eslint-disable-next-line jsdoc/require-jsdoc, typescript/typedef
 export const NGX_PWA_OFFLINE_SERVICE = new InjectionToken(
     'Provider for the OfflineService used eg. in the offline request interceptor.',
     {
@@ -19,7 +20,7 @@ export const NGX_PWA_OFFLINE_SERVICE = new InjectionToken(
         factory: () => {
         // eslint-disable-next-line no-console
             console.error(
-            // eslint-disable-next-line max-len
+                // eslint-disable-next-line stylistic/max-len
                 'No OfflineService has been provided for the token NGX_OFFLINE_SERVICE\nAdd this to your app.module.ts provider array:\n{\n    provide: NGX_PWA_OFFLINE_SERVICE,\n    useExisting: MyOfflineService\n}'
             );
         }
@@ -94,7 +95,7 @@ export class NgxPwaOfflineService {
     get cachedRequests(): CachedRequest<unknown>[] {
         return this.cachedRequestsSubject.value;
     }
-    // eslint-disable-next-line jsdoc/require-jsdoc
+
     set cachedRequests(cachedRequests: CachedRequest<unknown>[]) {
         localStorage.setItem(this.CACHED_REQUESTS_KEY, JSON.stringify(cachedRequests));
         this.cachedRequestsSubject.next(cachedRequests);
@@ -116,7 +117,6 @@ export class NgxPwaOfflineService {
 
     /**
      * Applies any offline data that has been cached to the given values.
-     *
      * @param type - The type of the provided entities. Is needed to check if any cached requests of the same type exist.
      * @param entities - The already existing data.
      * @returns The already existing entities extended/modified by the offline cached requests.
@@ -155,7 +155,6 @@ export class NgxPwaOfflineService {
 
     /**
      * Applies an UPDATE to an entity without sending a request to the server.
-     *
      * @param changes - The changes that should be made to the entity.
      * @param entity - The entity that should be updated.
      * @returns The updated entity.
@@ -172,7 +171,6 @@ export class NgxPwaOfflineService {
 
     /**
      * Sends a specific cached request to the server.
-     *
      * @param request - The request that should be synced.
      */
     async sync<T>(request: CachedRequest<T>): Promise<void> {
@@ -217,7 +215,7 @@ export class NgxPwaOfflineService {
      * The recursive method used to syn all requests to the api.
      */
     protected async syncAllRecursive(): Promise<void> {
-        // eslint-disable-next-line max-len
+        // eslint-disable-next-line stylistic/max-len
         const request: CachedRequest<BaseEntityType<unknown>> | undefined = this.cachedRequests.find(r => !this.hasUnresolvedDependency(r)) as CachedRequest<BaseEntityType<unknown>> | undefined;
         if (!request) {
             return;
@@ -229,7 +227,6 @@ export class NgxPwaOfflineService {
 
     /**
      * Sends a single cached request to the server.
-     *
      * @param request - The request that should be synced.
      * @returns A promise of the request result.
      */
@@ -237,21 +234,20 @@ export class NgxPwaOfflineService {
         request: CachedRequest<T>
     ): Promise<T> {
         if (this.isOffline || this.hasUnresolvedDependency(request)) {
-            throw new Error();
+            throw new Error('Could not sync the request');
         }
         const requestObservable: Observable<T> | undefined = this.request(request);
         if (!requestObservable) {
-            throw new Error();
+            throw new Error('Could not sync the request');
         }
         return await firstValueFrom(requestObservable);
     }
 
     private updateOfflineIdsInRequests<T>(request: CachedRequest<T>, res: T): void {
-        if (this.cachedRequests.length && request.request.body != null) {
+        if (this.cachedRequests.length && request.request.body != undefined) {
             const idKey: keyof BaseEntityType<unknown> = request.metadata.idKey;
-            if (res[idKey] != null) {
-                // eslint-disable-next-line max-len
-                const requestsString: string = `${this.cachedRequests}`.split(request.request.body[idKey] as string).join(res[idKey] as string);
+            if (res[idKey] != undefined) {
+                const requestsString: string = `${this.cachedRequests}`.split(request.request.body[idKey]).join(res[idKey]);
                 this.cachedRequests = JSON.parse(requestsString) as CachedRequest<T>[];
             }
         }
@@ -259,7 +255,6 @@ export class NgxPwaOfflineService {
 
     /**
      * Calls http.post/patch/delete etc. On the provided request.
-     *
      * @param request - The request that should be sent.
      * @returns The observable of the request or undefined if something went wrong.
      */
@@ -283,7 +278,6 @@ export class NgxPwaOfflineService {
 
     /**
      * Checks if the given request has an unresolved dependency by looking for the keyword 'offline' inside of it.
-     *
      * @param request - The request that should be checked.
      * @returns Whether or no the given request has an unresolved dependency.
      */
@@ -294,7 +288,6 @@ export class NgxPwaOfflineService {
 
     /**
      * Removes a single request from the cache.
-     *
      * @param request - The request that should be removed.
      */
     removeSingleRequest(request: CachedRequest<unknown>): void {

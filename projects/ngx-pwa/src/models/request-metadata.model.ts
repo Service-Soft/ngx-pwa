@@ -1,4 +1,5 @@
 import { HttpContextToken } from '@angular/common/http';
+
 import { BaseEntityType } from '../services/offline.service';
 
 /**
@@ -8,7 +9,6 @@ import { BaseEntityType } from '../services/offline.service';
 export interface RequestMetadata {
     /**
      * The idKey of the request.
-     *
      * @default 'id'
      */
     idKey?: keyof BaseEntityType<unknown>,
@@ -24,5 +24,5 @@ export interface RequestMetadata {
     displayValue?: string
 }
 
-// eslint-disable-next-line max-len
+// eslint-disable-next-line stylistic/max-len, jsdoc/require-jsdoc
 export const NGX_PWA_HTTP_CONTEXT_METADATA: HttpContextToken<RequestMetadata | undefined> = new HttpContextToken<RequestMetadata | undefined>(() => undefined);
