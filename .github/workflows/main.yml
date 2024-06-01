@@ -28,4 +28,4 @@ jobs:
             - name: Linting
               run: |
                   cd $GITHUB_WORKSPACE
-                  npm run lint
+                  npm run lint:ci
