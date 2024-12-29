@@ -28,13 +28,17 @@ function defaultCachedRequestMetadata(req: HttpRequest<unknown>): string {
 
 function getColorForHttpMethod(method: string): string {
     switch (method) {
-        case HttpMethod.POST:
+        case HttpMethod.POST: {
             return 'green';
-        case HttpMethod.PATCH:
+        }
+        case HttpMethod.PATCH: {
             return 'black';
-        case HttpMethod.DELETE:
+        }
+        case HttpMethod.DELETE: {
             return 'red';
-        default:
+        }
+        default: {
             return 'black';
+        }
     }
 }

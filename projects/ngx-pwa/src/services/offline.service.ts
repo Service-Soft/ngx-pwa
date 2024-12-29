@@ -143,22 +143,26 @@ export class NgxPwaOfflineService {
         const cachedRequests: CachedRequest<unknown>[] = this.cachedRequests.filter(req => req.metadata.type === type);
         for (const req of cachedRequests) {
             switch (req.request.method) {
-                case HttpMethod.POST:
+                case HttpMethod.POST: {
                     res.push(req.request.body as EntityType);
                     break;
-                case HttpMethod.PATCH:
+                }
+                case HttpMethod.PATCH: {
                     const patchIdKey: keyof EntityType = req.metadata.idKey;
                     const index: number = res.findIndex(e => req.request.urlWithParams.includes(`${e[patchIdKey]}`));
                     res[index] = this.updateOffline(req.request.body as EntityType, res[index]);
                     break;
-                case HttpMethod.DELETE:
+                }
+                case HttpMethod.DELETE: {
                     const deleteIdKey: keyof EntityType = req.metadata.idKey;
                     res.splice(res.findIndex(e => req.request.urlWithParams.includes(`${e[deleteIdKey]}`)), 1);
                     break;
-                default:
+                }
+                default: {
                     // eslint-disable-next-line no-console
                     console.error('There was an unknown http-method in one of your cached offline requests:', req.request.method);
                     break;
+                }
             }
         }
         return res;
@@ -194,7 +198,7 @@ export class NgxPwaOfflineService {
             this.removeSingleRequest(request);
             this.updateOfflineIdsInRequests(request, res);
         }
-        catch (error) {
+        catch {
             this.zone.run(() => {
                 this.snackBar.open(this.SINGLE_SYNC_FAILED_SNACK_BAR_MESSAGE, undefined, { duration: 2500 });
             });
@@ -214,7 +218,7 @@ export class NgxPwaOfflineService {
             });
             this.cachedRequests = [];
         }
-        catch (error) {
+        catch {
             this.zone.run(() => {
                 this.snackBar.open(this.ALL_SYNC_FAILED_SNACK_BAR_MESSAGE, undefined, { duration: 2500 });
             });
@@ -273,17 +277,21 @@ export class NgxPwaOfflineService {
         request: CachedRequest<EntityType>
     ): Observable<EntityType> | undefined {
         switch (request.request.method) {
-            case HttpMethod.POST:
+            case HttpMethod.POST: {
                 return this.http.post<EntityType>(
                     request.request.urlWithParams,
                     LodashUtilities.omit(request.request.body, request.metadata.idKey)
                 );
-            case HttpMethod.PATCH:
+            }
+            case HttpMethod.PATCH: {
                 return this.http.patch<EntityType>(request.request.urlWithParams, request.request.body);
-            case HttpMethod.DELETE:
+            }
+            case HttpMethod.DELETE: {
                 return this.http.delete<EntityType>(request.request.urlWithParams);
-            default:
+            }
+            default: {
                 return undefined;
+            }
         }
     }
 
