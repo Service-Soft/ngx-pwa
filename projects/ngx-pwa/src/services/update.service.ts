@@ -20,18 +20,22 @@ export class NgxPwaUpdateService {
         }
         this.swUpdate.versionUpdates.subscribe(e => {
             switch (e.type) {
-                case 'VERSION_READY':
+                case 'VERSION_READY': {
                     void this.onVersionReady();
                     break;
-                case 'VERSION_DETECTED':
+                }
+                case 'VERSION_DETECTED': {
                     this.onVersionDetected();
                     break;
-                case 'VERSION_INSTALLATION_FAILED':
+                }
+                case 'VERSION_INSTALLATION_FAILED': {
                     this.onVersionInstallationFailed();
                     break;
-                case 'NO_NEW_VERSION_DETECTED':
+                }
+                case 'NO_NEW_VERSION_DETECTED': {
                     this.onNoNewVersionDetected();
                     break;
+                }
             }
         });
     }

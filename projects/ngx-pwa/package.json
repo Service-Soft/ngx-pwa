@@ -1,6 +1,6 @@
 {
     "name": "ngx-pwa",
-    "version": "18.0.0",
+    "version": "18.0.1",
     "license": "MIT",
     "keywords": [
         "angular",
@@ -14,6 +14,8 @@
         "@angular/common": "18",
         "@angular/core": "18",
         "@angular/material": "18",
+        "@angular/forms": "18",
+        "@angular/animations": "18",
         "@angular/service-worker": "18",
         "uuid": "9",
         "lodash": "4",
