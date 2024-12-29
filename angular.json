@@ -1,84 +1,62 @@
 {
     "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-    "version": 1,
     "newProjectRoot": "projects",
     "projects": {
         "ngx-pwa": {
-            "projectType": "library",
-            "root": "projects/ngx-pwa",
-            "sourceRoot": "projects/ngx-pwa/src",
-            "prefix": "lib",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:ng-packagr",
-                    "options": {
-                        "project": "projects/ngx-pwa/ng-package.json"
-                    },
                     "configurations": {
-                        "production": {
-                            "tsConfig": "projects/ngx-pwa/tsconfig.lib.prod.json"
-                        },
                         "development": {
                             "tsConfig": "projects/ngx-pwa/tsconfig.lib.json"
+                        },
+                        "production": {
+                            "tsConfig": "projects/ngx-pwa/tsconfig.lib.prod.json"
                         }
                     },
-                    "defaultConfiguration": "production"
+                    "defaultConfiguration": "production",
+                    "options": {
+                        "project": "projects/ngx-pwa/ng-package.json"
+                    }
                 },
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
+                        "karmaConfig": "projects/ngx-pwa/karma.conf.js",
                         "main": "projects/ngx-pwa/src/test.ts",
-                        "tsConfig": "projects/ngx-pwa/tsconfig.spec.json",
-                        "karmaConfig": "projects/ngx-pwa/karma.conf.js"
+                        "tsConfig": "projects/ngx-pwa/tsconfig.spec.json"
                     }
                 }
-            }
+            },
+            "prefix": "lib",
+            "projectType": "library",
+            "root": "projects/ngx-pwa",
+            "sourceRoot": "projects/ngx-pwa/src"
         },
         "ngx-pwa-showcase": {
-            "projectType": "application",
-            "schematics": {
-                "@schematics/angular:component": {
-                    "style": "scss"
-                }
-            },
-            "root": "projects/ngx-pwa-showcase",
-            "sourceRoot": "projects/ngx-pwa-showcase/src",
-            "prefix": "app",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
-                    "options": {
-                        "outputPath": "dist/ngx-pwa-showcase",
-                        "index": "projects/ngx-pwa-showcase/src/index.html",
-                        "main": "projects/ngx-pwa-showcase/src/main.ts",
-                        "polyfills": "projects/ngx-pwa-showcase/src/polyfills.ts",
-                        "tsConfig": "projects/ngx-pwa-showcase/tsconfig.app.json",
-                        "inlineStyleLanguage": "scss",
-                        "assets": [
-                          "projects/ngx-pwa-showcase/src/favicon.ico",
-                          "projects/ngx-pwa-showcase/src/assets",
-                          "projects/ngx-pwa-showcase/src/manifest.webmanifest"
-                        ],
-                        "styles": [
-                          "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-                          "projects/ngx-pwa-showcase/src/styles.scss"
-                        ],
-                        "scripts": [],
-                        "serviceWorker": true,
-                        "ngswConfigPath": "projects/ngx-pwa-showcase/ngsw-config.json"
-                    },
                     "configurations": {
+                        "development": {
+                            "buildOptimizer": false,
+                            "extractLicenses": false,
+                            "namedChunks": true,
+                            "optimization": false,
+                            "sourceMap": true,
+                            "vendorChunk": true
+                        },
                         "production": {
                             "budgets": [
                                 {
-                                    "type": "initial",
+                                    "maximumError": "1mb",
                                     "maximumWarning": "500kb",
-                                    "maximumError": "1mb"
+                                    "type": "initial"
                                 },
                                 {
-                                    "type": "anyComponentStyle",
+                                    "maximumError": "4kb",
                                     "maximumWarning": "2kb",
-                                    "maximumError": "4kb"
+                                    "type": "anyComponentStyle"
                                 }
                             ],
                             "fileReplacements": [
@@ -88,57 +66,79 @@
                                 }
                             ],
                             "outputHashing": "all"
-                        },
-                        "development": {
-                            "buildOptimizer": false,
-                            "optimization": false,
-                            "vendorChunk": true,
-                            "extractLicenses": false,
-                            "sourceMap": true,
-                            "namedChunks": true
                         }
                     },
-                    "defaultConfiguration": "production"
-                },
-                "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
-                    "configurations": {
-                        "production": {
-                            "browserTarget": "ngx-pwa-showcase:build:production"
-                        },
-                        "development": {
-                            "browserTarget": "ngx-pwa-showcase:build:development"
-                        }
-                    },
-                    "defaultConfiguration": "development"
+                    "defaultConfiguration": "production",
+                    "options": {
+                        "assets": [
+                            "projects/ngx-pwa-showcase/src/favicon.ico",
+                            "projects/ngx-pwa-showcase/src/assets",
+                            "projects/ngx-pwa-showcase/src/manifest.webmanifest"
+                        ],
+                        "index": "projects/ngx-pwa-showcase/src/index.html",
+                        "inlineStyleLanguage": "scss",
+                        "main": "projects/ngx-pwa-showcase/src/main.ts",
+                        "ngswConfigPath": "projects/ngx-pwa-showcase/ngsw-config.json",
+                        "outputPath": "dist/ngx-pwa-showcase",
+                        "polyfills": "projects/ngx-pwa-showcase/src/polyfills.ts",
+                        "scripts": [],
+                        "serviceWorker": true,
+                        "styles": [
+                            "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+                            "projects/ngx-pwa-showcase/src/styles.scss"
+                        ],
+                        "tsConfig": "projects/ngx-pwa-showcase/tsconfig.app.json"
+                    }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "ngx-pwa-showcase:build"
+                        "buildTarget": "ngx-pwa-showcase:build"
                     }
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "configurations": {
+                        "development": {
+                            "buildTarget": "ngx-pwa-showcase:build:development"
+                        },
+                        "production": {
+                            "buildTarget": "ngx-pwa-showcase:build:production"
+                        }
+                    },
+                    "defaultConfiguration": "development"
                 },
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
+                        "assets": [
+                            "projects/ngx-pwa-showcase/src/favicon.ico",
+                            "projects/ngx-pwa-showcase/src/assets",
+                            "projects/ngx-pwa-showcase/src/manifest.webmanifest"
+                        ],
+                        "inlineStyleLanguage": "scss",
+                        "karmaConfig": "projects/ngx-pwa-showcase/karma.conf.js",
                         "main": "projects/ngx-pwa-showcase/src/test.ts",
                         "polyfills": "projects/ngx-pwa-showcase/src/polyfills.ts",
-                        "tsConfig": "projects/ngx-pwa-showcase/tsconfig.spec.json",
-                        "karmaConfig": "projects/ngx-pwa-showcase/karma.conf.js",
-                        "inlineStyleLanguage": "scss",
-                        "assets": [
-                          "projects/ngx-pwa-showcase/src/favicon.ico",
-                          "projects/ngx-pwa-showcase/src/assets",
-                          "projects/ngx-pwa-showcase/src/manifest.webmanifest"
-                        ],
+                        "scripts": [],
                         "styles": [
-                          "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-                          "projects/ngx-pwa-showcase/src/styles.scss"
+                            "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+                            "projects/ngx-pwa-showcase/src/styles.scss"
                         ],
-                        "scripts": []
+                        "tsConfig": "projects/ngx-pwa-showcase/tsconfig.spec.json"
                     }
                 }
-            }
+            },
+            "prefix": "app",
+            "projectType": "application",
+            "root": "projects/ngx-pwa-showcase",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "scss"
+                }
+            },
+            "sourceRoot": "projects/ngx-pwa-showcase/src"
         }
-    }
+    },
+    "version": 1
 }
