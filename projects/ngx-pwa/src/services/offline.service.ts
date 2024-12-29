@@ -1,5 +1,6 @@
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpRequest } from '@angular/common/http';
-import { InjectionToken, NgZone } from '@angular/core';
+import { Inject, InjectionToken, NgZone, PLATFORM_ID } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 
@@ -97,6 +98,9 @@ export class NgxPwaOfflineService {
     }
 
     set cachedRequests(cachedRequests: CachedRequest<unknown>[]) {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
         localStorage.setItem(this.CACHED_REQUESTS_KEY, JSON.stringify(cachedRequests));
         this.cachedRequestsSubject.next(cachedRequests);
     }
@@ -104,8 +108,15 @@ export class NgxPwaOfflineService {
     constructor(
         private readonly http: HttpClient,
         private readonly snackBar: MatSnackBar,
-        private readonly zone: NgZone
+        private readonly zone: NgZone,
+        @Inject(PLATFORM_ID)
+        private readonly platformId: Object
     ) {
+        if (!isPlatformBrowser(platformId)) {
+            this.isOffline = false;
+            this.cachedRequestsSubject = new BehaviorSubject<CachedRequest<unknown>[]>([]);
+            return;
+        }
         this.isOffline = !navigator.onLine;
         window.ononline = () => this.isOffline = !navigator.onLine;
         window.onoffline = () => this.isOffline = !navigator.onLine;
