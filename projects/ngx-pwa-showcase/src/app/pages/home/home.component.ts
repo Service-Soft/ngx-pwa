@@ -3,7 +3,7 @@ import { HttpContext, HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { NGX_PWA_HTTP_CONTEXT_METADATA, NgxPwaSynchronizeBadgeComponent, NgxPwaVersionReadyDialogComponent } from 'ngx-pwa';
+import { NGX_PWA_HTTP_CONTEXT_METADATA, NgxPwaVersionReadyDialogComponent } from 'ngx-pwa';
 import { firstValueFrom } from 'rxjs';
 
 import { NotificationService } from '../../services/notification.service';
@@ -15,10 +15,7 @@ import { UpdateService } from '../../services/update.service';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: [
-        NgxPwaSynchronizeBadgeComponent,
-        MatButtonModule
-    ]
+    imports: [MatButtonModule]
 })
 export class HomeComponent {
     context: HttpContext = new HttpContext().set(NGX_PWA_HTTP_CONTEXT_METADATA, { type: 'testType' });

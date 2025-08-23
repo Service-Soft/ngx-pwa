@@ -1,4 +1,4 @@
-import * as DOMPurify from 'dompurify';
+import purify from 'dompurify';
 
 /**
  * Contains HelperMethods around handling the purification of html strings.
@@ -12,6 +12,6 @@ export abstract class PurifyUtilities {
      * @returns A sanitized string of the given source.
      */
     static sanitize(source: string): string {
-        return DOMPurify.sanitize(source);
+        return purify.sanitize(source);
     }
 }
