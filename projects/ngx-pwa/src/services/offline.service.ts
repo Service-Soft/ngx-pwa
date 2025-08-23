@@ -262,6 +262,8 @@ export class NgxPwaOfflineService {
         if (this.cachedRequests.length && request.request.body != undefined) {
             const idKey: keyof BaseEntityType<unknown> = request.metadata.idKey;
             if (res[idKey] != undefined) {
+                // TODO: Investigate
+                // eslint-disable-next-line typescript/no-base-to-string
                 const requestsString: string = `${this.cachedRequests}`.split(request.request.body[idKey]).join(res[idKey]);
                 this.cachedRequests = JSON.parse(requestsString) as CachedRequest<T>[];
             }

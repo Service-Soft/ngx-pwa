@@ -18,14 +18,6 @@
                     "options": {
                         "project": "projects/ngx-pwa/ng-package.json"
                     }
-                },
-                "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
-                    "options": {
-                        "karmaConfig": "projects/ngx-pwa/karma.conf.js",
-                        "main": "projects/ngx-pwa/src/test.ts",
-                        "tsConfig": "projects/ngx-pwa/tsconfig.spec.json"
-                    }
                 }
             },
             "prefix": "lib",
@@ -107,26 +99,6 @@
                         }
                     },
                     "defaultConfiguration": "development"
-                },
-                "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
-                    "options": {
-                        "assets": [
-                            "projects/ngx-pwa-showcase/src/favicon.ico",
-                            "projects/ngx-pwa-showcase/src/assets",
-                            "projects/ngx-pwa-showcase/src/manifest.webmanifest"
-                        ],
-                        "inlineStyleLanguage": "scss",
-                        "karmaConfig": "projects/ngx-pwa-showcase/karma.conf.js",
-                        "main": "projects/ngx-pwa-showcase/src/test.ts",
-                        "polyfills": "projects/ngx-pwa-showcase/src/polyfills.ts",
-                        "scripts": [],
-                        "styles": [
-                            "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-                            "projects/ngx-pwa-showcase/src/styles.scss"
-                        ],
-                        "tsConfig": "projects/ngx-pwa-showcase/tsconfig.spec.json"
-                    }
                 }
             },
             "prefix": "app",

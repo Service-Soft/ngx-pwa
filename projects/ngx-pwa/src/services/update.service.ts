@@ -36,6 +36,10 @@ export class NgxPwaUpdateService {
                     this.onNoNewVersionDetected();
                     break;
                 }
+                case 'VERSION_FAILED': {
+                    this.onVersionFailed();
+                    break;
+                }
             }
         });
     }
@@ -58,6 +62,13 @@ export class NgxPwaUpdateService {
      * Gets called when a new version has been found.
      */
     protected onVersionDetected(): void {
+        return;
+    }
+
+    /**
+     * Gets called when the version has a critical error.
+     */
+    protected onVersionFailed(): void {
         return;
     }
 
