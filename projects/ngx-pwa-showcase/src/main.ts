@@ -1,7 +1,6 @@
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { enableProdMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { NavRoute } from 'ngx-material-navigation';
@@ -29,7 +28,6 @@ bootstrapApplication(
     {
         providers: [
             provideRouter(routes),
-            provideAnimations(),
             provideHttpClient(withInterceptorsFromDi()),
             provideServiceWorker(
                 'ngsw-worker.js',

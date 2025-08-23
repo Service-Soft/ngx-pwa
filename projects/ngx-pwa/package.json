@@ -1,6 +1,6 @@
 {
     "name": "ngx-pwa",
-    "version": "18.0.1",
+    "version": "20.0.0",
     "license": "MIT",
     "keywords": [
         "angular",
@@ -11,17 +11,17 @@
         "background-sync"
     ],
     "peerDependencies": {
-        "@angular/common": "18",
-        "@angular/core": "18",
-        "@angular/material": "18",
-        "@angular/forms": "18",
-        "@angular/animations": "18",
-        "@angular/service-worker": "18",
+        "@angular/common": "20",
+        "@angular/core": "20",
+        "@angular/material": "20",
+        "@angular/forms": "20",
+        "@angular/animations": "20",
+        "@angular/service-worker": "20",
         "uuid": "9",
         "lodash": "4",
         "dompurify": "3"
     },
     "dependencies": {
-        "tslib": "^2.6.2"
+        "tslib": "^2.8.1"
     }
 }
