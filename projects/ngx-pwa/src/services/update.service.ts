@@ -36,10 +36,6 @@ export class NgxPwaUpdateService {
                     this.onNoNewVersionDetected();
                     break;
                 }
-                case 'VERSION_FAILED': {
-                    this.onVersionFailed();
-                    break;
-                }
             }
         });
     }
