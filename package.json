@@ -28,9 +28,6 @@
         "copyToDist:contributing": "ncp ./CONTRIBUTING.md ./dist/ngx-pwa/CONTRIBUTING.md",
         "copyToDist:license": "ncp ./LICENSE.md ./dist/ngx-pwa/LICENSE.md"
     },
-    "repository": {
-        "url": "https://github.com/Service-Soft/ngx-pwa"
-    },
     "private": true,
     "dependencies": {
         "@angular/cdk": "^20.2.0",

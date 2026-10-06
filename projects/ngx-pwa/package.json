@@ -2,6 +2,9 @@
     "name": "ngx-pwa",
     "version": "20.0.1",
     "license": "MIT",
+    "repository": {
+        "url": "https://github.com/Service-Soft/ngx-pwa"
+    },
     "keywords": [
         "angular",
         "material",
